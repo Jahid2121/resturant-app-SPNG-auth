@@ -9,12 +9,15 @@ const Register = () => {
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
   const [ShowPassword, setShowPassword] = useState<boolean>(false)
-  const { user, updateUser } = useUserStore((state) => ({
+  const { user, updateUser, jwt } = useUserStore((state) => ({
     user: state.user,
     updateUser: state.updateUser,
+    jwt: state.jwt
   }));
 
   console.log("user in the Zustand state", user);
+  console.log("user Token", jwt);
+
 
 
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
