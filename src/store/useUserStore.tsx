@@ -39,6 +39,23 @@ export const useUserStore = create((set) => ({
       return updatedState;
     });
   },
+  logoutUser: () => {
+    set(() => {
+      localStorage.removeItem('user'); 
+      localStorage.removeItem('jwt')
+      return {
+        user: {
+          id: null,
+          username: '',
+          email: '',
+          provider: '',
+          createdAt: '',
+          updatedAt: '',
+        },
+        jwt: '',
+      }
+    })
+  }
 }));
 
 //   updateUser: (newUser) => set((state) => ({

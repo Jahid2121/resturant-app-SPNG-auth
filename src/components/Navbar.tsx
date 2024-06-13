@@ -1,7 +1,23 @@
+import { useUserStore } from '@/store/useUserStore';
 import Link from 'next/link';
 import React from 'react';
 
 const Navbar = () => {
+  const {user, logoutUser} = useUserStore((state) => ({
+    user: state.user, 
+    logoutUser: state.logoutUser
+  }))
+  console.log(user);
+
+  const handleLogout = () => {
+    logoutUser()
+  }
+  if(user) {
+    console.log('we have user');
+  }
+  else {
+    console.log('no user found');
+  }
     return (
         <div>
             <div className="navbar bg-base-100">
@@ -31,7 +47,10 @@ const Navbar = () => {
     </ul>
   </div>
   <div className="navbar-end">
-    <a className="btn">Button</a>
+    {
+      user ? <a onClick={handleLogout} className="btn">Logout</a> :  <a className="btn">Login</a>
+    }
+    
   </div>
 </div>
         </div>

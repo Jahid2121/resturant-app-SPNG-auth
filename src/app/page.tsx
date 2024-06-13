@@ -14,7 +14,7 @@ export default function Home() {
     jwt: state.jwt
   }))
   console.log(user, jwt);
-  console.log(meals);
+  // console.log(meals);
   const {loading, error, data} = useQuery(GET_MEAL, {
     fetchPolicy: "no-cache",
     context: {
