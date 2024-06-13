@@ -1,32 +1,32 @@
 "use client"
+
+import { useUserStore } from "@/store/useUserStore";
 import axios from "axios";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 const Register = () => {
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [ShowPassword, setShowPassword] = useState(false)
-  
-  const handleGoogleLogin = () => {
-    // googleLogin()
-    // .then(result => {
-    //   console.log(result.user);
-    //   navigate(location?.state ? location.state : '/')
-    // })
-    // .catch(error => {
-    //   console.error(error);
-    // })
-  }
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
+  const [ShowPassword, setShowPassword] = useState<boolean>(false)
+  const { user, updateUser } = useUserStore((state) => ({
+    user: state.user,
+    updateUser: state.updateUser,
+  }));
 
-  const handleRegister = (e: FormEvent<HTMLFormElement>) => {
+  console.log("user in the Zustand state", user);
+
+
+  const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
     const name = (form.name as HTMLInputElement).value;
     const email = (form.email as HTMLInputElement).value;
     const password = (form.password as HTMLInputElement).value;
-    // const photo = form.image.value;
-    console.log(name, email, password);
+    // const photo = (form.password as HTMLInputElement).value;
+    // console.log(name, email, password);
+    const data = {name: name, email: email, password: password}
+    console.log(data);
 
     setError("");
     setSuccess("");
@@ -41,20 +41,50 @@ const Register = () => {
       setError("Must include a special character");
       return;
     }
-    axios
-      .post('http://localhost:1337/api/auth/local/register', {
-        username: name,
-        email: email,
-        password: password,
-      })
-      .then(response => {
-        console.log('User profile', response.data.user);
-        console.log('User token', response.data.jwt);
+
+      try {
+        const response = await fetch('http://localhost:1337/api/auth/local/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            username: name,
+            email: email,
+            password: password,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        const data = await response.json();
+        console.log('User profile', data.user);
+        console.log('User token', data.jwt);
+        // updateName(data.name)
+        // updateToken(data.token)
+        updateUser({
+          user: data.user,
+          jwt: data.jwt,
+        });
+      } catch (error) {
+        console.log('An error occurred:', error);
+      }
+ 
+
+
+    // axios
+    //   .post('http://localhost:1337/api/auth/local/register', {
+    //     username: name,
+    //     email: email,
+    //     password: password,
+    //   })
+    //   .then(response => {
+    //     console.log('User profile', response.data.user);
+    //     console.log('User token', response.data.jwt);
+    //     updateToken(response.data.jwt);
+    //   setSuccess("Registration successful");
         
-      })
-      .catch(error => {
-        console.log('An error occurred:', error.response);
-      });
+    //   })
+    //   .catch(error => {
+    //     console.log('An error occurred:', error.response);
+    //   });
 
    };
 
@@ -81,18 +111,18 @@ const Register = () => {
             </div>
 
             {/* image */}
-            {/* <div className="form-control">
+            <div className="form-control">
               <label className="label">
-                <span className="label-text">Photo</span>
+                <span className="label-text"> give a link to photo</span>
               </label>
-              <input
+              {/* <input
                 type="file"
                 accept="image/*"
                 name="imageFile"
                 placeholder="name"
                 className="input input-bordered"
-              />
-              <h2 className="my-2">Or give a link</h2>
+              /> */}
+              <h2 className="my-2"></h2>
               <input
                 type="text"
                 name="image"
@@ -100,7 +130,7 @@ const Register = () => {
                 className="input input-bordered"
                 required
               />
-            </div> */}
+            </div>
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Email</span>
@@ -137,7 +167,7 @@ const Register = () => {
             
             {error && <p className="text-red-700  flex items-center first-letter:text-5xl"><span className="h-5 w-5 rounded-full text-2xl ">!</span> {error}</p>}
             {success && <p className="text-green-800">{success}</p>}
-            <span onClick={handleGoogleLogin}>
+            <span >
   <button className='hover:bg-gradient-to-r from-blue-500 via-green-500 to-red-500 flex items-center gap-4 p-3 mt-8 mr-5 border text-2xl w-14 rounded-full'>
     <img src="https://i.ibb.co/ydH0LHr/google.png" alt="" /> 
     <span style={{color: '#4285F4'}}>G</span>
